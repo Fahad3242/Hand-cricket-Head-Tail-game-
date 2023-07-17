@@ -1,0 +1,280 @@
+#include <iostream>
+#include <stdlib.h>
+#include <time.h>
+#include <thread>
+#include <cstdlib>
+#include <limits>
+#include <windows.h> // system library
+#include <stdio.h>
+#include<fstream>
+
+
+using namespace std;
+	void menu(){
+	cout<<"\n ________________";
+	cout<<"\n|                |";
+	cout<<"\n|    Main Menu   |";
+	cout<<"\n|________________|"<<endl;
+	
+	cout<<"\n1.Play Game"<<endl;
+	cout<<"\n2.Instructions"<<endl;
+	cout<<"\n3.Exit"<<endl;
+	
+	
+		
+		
+	}
+	 void load ()
+	{
+    system("COLOR 0e");
+    system("2f");
+    system("cls");
+    printf("\e[?25l");
+
+    SetConsoleCP(437);
+    //console page 437
+    SetConsoleOutputCP(437);
+    //set ASCII to print special character.
+    int bar1=77,bar2=219;
+    cout<< "    \t \t||__________Hand Cricket Game____________||"<<endl;
+    cout<<"\n\n\n\t\t\t\tLoading......."<<endl;
+    cout<<"\n\n\n\t\t\t\t\t\t"<<endl;
+
+    for(int i= 0;i<25;i++)
+        cout << (char)bar1;
+    cout<<"\r";
+    cout<<"\t\t\t";
+   for(int i= 0;i<25;i++)
+   {
+       cout << (char) bar2;
+       Sleep(150);
+   }
+   cout <<"\n\t\t\t"<<(char) 1<<"i";
+   system ("Pause");
+   system("cls");
+
+  
+
+}
+
+
+
+class HandCricket {
+protected:
+    int overs;
+    int tossResult;
+    int result;
+
+public:
+    HandCricket() {
+        srand(time(NULL));
+        overs = 0;
+        tossResult = 0;
+        result = 2;
+    }
+
+    void welcomeMessage() {
+        cout << "WELCOME To" << endl;
+        cout << "HAND CRICKET" << endl;
+        cout << "-----------------------------------------------------------------" << endl;
+        cout << "-----------------------------------------------------------------" << endl;
+    }
+
+    void getOvers() {
+        cout << "Choose the number of balls in the match: ";
+        cin >> overs;
+        cout << endl;
+        cout << "-----------------------------------------------------------------" << endl;
+    }
+
+    int toss() {
+        char inputToss, userInputToss = 0;
+        do {
+            cout << "Enter H for Heads and T for Tails" << endl;
+            cin >> inputToss;
+        } while (inputToss != 'H' && inputToss != 'T' && inputToss != 'h' && inputToss != 't');
+
+        if (inputToss == 'h' || inputToss == 'H')
+            userInputToss = 0;
+        if (inputToss == 't' || inputToss == 'T')
+            userInputToss = 1;
+
+        int batBowl = 0;
+        int cpuInputToss = rand() % 2;
+
+        if (cpuInputToss == userInputToss) {
+            cout << "Congrats...You have won the toss. Would you like to Bat or Bowl?" << endl;
+            do {
+                cout << "Enter 1 to BAT and 2 to Bowl: " << endl;
+                cin >> batBowl;
+            } while (batBowl > 2 || batBowl < 1);
+        } else {
+            cout << "CPU won the toss." << endl;
+            batBowl = rand() % 2 + 1;
+        }
+
+        if (batBowl == 1)
+            cout << "You are batting first." << endl;
+        else
+            cout << "CPU is batting first." << endl;
+
+        return batBowl;
+    }
+
+    long long int batting(int balls) {
+        long long int score = 0;
+        int chances = 2; // Maximum chances to be out
+        while (balls > 0 && chances > 0) {
+            cout << "Balls left: " << balls << endl;
+            cout << "Your Score: " << score << endl;
+            int run = 0;
+            do {
+                cout << "Enter the runs (an integer in set {0,1,2,3,4,5,6}) which you want to hit: ";
+                cin >> run;
+            } while (run < 0 || run > 6);
+
+            int cpuRun = rand() % 7;
+
+            if (cpuRun == run) {
+                cout << "You are out!!!" << endl;
+                chances--;
+            } else {
+                cout << "Your input: " << run << endl;
+                cout << "CPU input: " << cpuRun << endl;
+                score += run;
+            }
+            balls--;
+        }
+        return score;
+    }
+
+    long long int bowling(int balls) {
+        long long int score = 0;
+        int chances = 2; // Maximum chances to get the batsman out
+        while (balls > 0 && chances > 0) {
+            cout << "Balls left: " << balls << endl;
+            cout << "CPU Score: " << score << endl;
+            int run = 0;
+            do {
+                cout << "Enter the runs (an integer in set {0,1,2,3,4,5,6}) which you want to bowl: ";
+                cin >> run;
+            } while (run < 0 || run > 6);
+
+            int cpuRun = rand() % 7;
+
+            if (cpuRun == run) {
+                cout << "CPU is out!!!" << endl;
+                chances--;
+            } else {
+                cout << "Your input: " << run << endl;
+                cout << "CPU input: " << cpuRun << endl;
+                score += cpuRun;
+            }
+            balls--;
+        }
+        return score;
+    }
+};
+
+class Match : public HandCricket {
+public:
+    void playMatch() {
+        cout << "Its TOSS time" << endl;
+        tossResult = toss();
+        cout << "-----------------------------------------------------------------" << endl;
+
+        do {
+            cout << "Get Ready for the match" << endl;
+            int counter = 5;
+            cout << "Time Remaining: ";
+            while (counter >= 0) {
+                cout << counter << " ";
+                std::this_thread::sleep_for(std::chrono::milliseconds(200));
+                counter--;
+            }
+            cout << "-----------------------------------------------------------------" << endl;
+            cout << "-----------------------------------------------------------------" << endl;
+            cout << "ITS MATCH TIME" << endl;
+            long long int score = 0, cpuScore = 0;
+            if (tossResult == 1) {
+                // The user is batting.
+                score = batting(overs);
+                cout << "Target for CPU: " << score + 1 << endl;
+                cpuScore = bowling(overs);
+            } else {
+                cpuScore = bowling(overs);
+                cout << "Target for You: " << cpuScore + 1 << endl;
+                score = batting(overs);
+            }
+            if (score > cpuScore) {
+                result = 0;
+                cout << "Congrats... YOU WIN!!!" << endl;
+            } else if (cpuScore > score) {
+                result = 1;
+                cout << "YOU LOSE... Better Luck Next Time!!!" << endl;
+            }
+            cout << "-----------------------------------------------------------------" << endl;
+            cout << "-----------------------------------------------------------------" << endl;
+            cout << "Match Summary" << endl;
+            cout << "Toss Result: " << ((tossResult == 1) ? ("You batted first") : ("CPU batted first")) << endl;
+            cout << "Your Score: " << score << endl;
+            cout << "CPU Score: " << cpuScore << endl;
+            cout << "RESULT: ";
+            if (result == 0) {
+                cout << "You WON by " << (score - cpuScore) << " runs" << endl;
+            } else if (result == 1) {
+                cout << "You Lost by " << (cpuScore - score) << " runs" << endl;
+            } else {
+                cout << "Match Tied!!!" << endl;
+                  cout << "SUPER BALL!!!!" << endl;
+                overs = 1;
+            }
+        } while (result == 2);
+    }
+};
+
+int main() {
+	
+	load();
+			// Loading function Goes here	
+	menu();
+
+	int choice;
+		cout<<"\nEnter your choice :\n";
+        cin>>choice;
+        switch (choice)
+	 {
+        case 1:
+            void play();
+            
+            break;
+        case 2:
+        
+           cout <<"Instrusctions are as follows:";
+           cout<<"\n1)The winner of the toss will decides who gets the first batting";
+  		   cout<<"\n2)You can select only the numbers (1-6 or 10) while playing the game.";
+ 		   cout<<"\n3)If your batting number and the computer balling number are same then you are out or vice versa.";
+ 		   cout<<"\n4)You win the game, If you score more than the computer.";
+		   cout<<"\n5)You lose the game, If the computer score more than you.";
+		   cout<<"\n_____________________________________________________________________________________________________";
+  
+            break;
+
+        case 3:
+            system("cls");
+           	cout << "You have chosen Quit, Goodbye.";
+           	return 0;
+            break;
+
+
+        default:
+            printf("*****Invalid choice*****\n Your selection must be between 1 and 3!");
+        }
+    Match match; // Inheritance: Match class inherits from HandCricket class
+    match.welcomeMessage(); // Encapsulation: Accessing the welcomeMessage() function from the base class
+    match.getOvers(); // Encapsulation: Accessing the getOvers() function from the base class
+    match.playMatch(); // Encapsulation: Accessing the playMatch() function from the derived class
+
+    return 0;
+}
+					
